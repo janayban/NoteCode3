@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "247090887283",
+    "project_id": "notecode-143fc",
+    "storage_bucket": "notecode-143fc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:247090887283:android:3f309d9bb445a30dbd0806",
+        "android_client_info": {
+          "package_name": "com.example.trialnotepad"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8g_Ae0Fn3hAzHv5CJM-qh_NGOe_Q8U8M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
