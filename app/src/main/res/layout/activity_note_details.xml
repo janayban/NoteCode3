@@ -1,196 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#1A1A1A"
-    android:fillViewport="true"
-    tools:layout_editor_absoluteX="1dp"
-    tools:layout_editor_absoluteY="-3dp">
+    android:id="@+id/main"
+    android:background="#1E1E1E"
+    tools:context=".NoteDetailsActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/main"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#1E1E1E"
-        tools:context=".NoteDetailsActivity"
-        tools:layout_editor_absoluteX="-2dp"
-        tools:layout_editor_absoluteY="505dp">
+        app:layout_constraintBottom_toTopOf="@+id/bottomNav"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="parent">
 
-        <ImageButton
-            android:id="@+id/backImageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:background="#00FFFFFF"
-            app:layout_constraintBottom_toTopOf="@+id/titleEditTextText"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.06"
-            app:srcCompat="@drawable/arrow_back" />
+    </FrameLayout>
 
-        <TextView
-            android:id="@+id/noteCodeTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="18dp"
-            android:text="NoteCode"
-            android:textColor="#DFDFDF"
-            android:textSize="18dp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/backImageButton"
-            app:layout_constraintTop_toTopOf="parent" />
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_nav_menu" />
 
-        <ImageButton
-            android:id="@+id/undoImageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="76dp"
-            android:layout_marginTop="16dp"
-            android:background="#00FFFFFF"
-            android:rotation="180"
-            app:layout_constraintBottom_toTopOf="@+id/titleEditTextText"
-            app:layout_constraintStart_toEndOf="@+id/noteCodeTextView"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/undo" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#1A1A1A"
+        android:fillViewport="true">
 
-        <ImageButton
-            android:id="@+id/redoImageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:background="#00FFFFFF"
-            android:rotation="180"
-            app:layout_constraintBottom_toTopOf="@+id/titleEditTextText"
-            app:layout_constraintStart_toEndOf="@+id/undoImageButton"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/redo" />
-
-        <ImageButton
-            android:id="@+id/checkImageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
-            android:background="#00FFFFFF"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.784"
-            app:layout_constraintStart_toEndOf="@id/redoImageButton"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/check" />
-
-        <EditText
-            android:id="@+id/titleEditTextText"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="15dp"
-            android:ems="10"
-            android:hint="Title"
-            android:inputType="textMultiLine"
-            android:maxLines="5"
-            android:padding="12dp"
-            android:scrollHorizontally="false"
-            android:textColor="#DFDFDF"
-            android:textColorHint="#D5CACA"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/noteCodeTextView" />
+            android:layout_height="match_parent">
 
-        <EditText
-            android:id="@+id/contentEditTextText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginEnd="15dp"
-            android:background="@null"
-            android:ems="10"
-            android:gravity="top"
-            android:hint="Note something down"
-            android:inputType="textMultiLine"
-            android:padding="12dp"
-            android:textColor="#DFDFDF"
-            android:textColorHint="#DBC5C5"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.487"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/titleEditTextText" />
-
-        <ImageButton
-            android:id="@+id/boldImageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="516dp"
-            android:backgroundTint="#00FFFFFF"
-            app:layout_constraintEnd_toStartOf="@+id/italicizeImageButton"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/contentEditTextText"
-            app:srcCompat="@drawable/bold" />
-
-        <ImageButton
-            android:id="@+id/underlineImageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="516dp"
-            android:backgroundTint="#00FFFFFF"
-            app:layout_constraintEnd_toStartOf="@+id/qrScannerImageButton"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/italicizeImageButton"
-            app:layout_constraintTop_toBottomOf="@+id/contentEditTextText"
-            app:srcCompat="@drawable/underline" />
-
-        <ImageButton
-            android:id="@+id/italicizeImageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="516dp"
-            android:backgroundTint="#00FFFFFF"
-            app:layout_constraintEnd_toStartOf="@+id/underlineImageButton"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/boldImageButton"
-            app:layout_constraintTop_toBottomOf="@+id/contentEditTextText"
-            app:srcCompat="@drawable/italicize" />
-
-        <ImageButton
-            android:id="@+id/qrScannerImageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="516dp"
-            android:backgroundTint="#00FFFFFF"
-            app:layout_constraintEnd_toStartOf="@+id/qrGeneratorImageButton"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/underlineImageButton"
-            app:layout_constraintTop_toBottomOf="@+id/contentEditTextText"
-            app:srcCompat="@drawable/qrcode_scanner" />
-
-        <ImageButton
-            android:id="@+id/qrGeneratorImageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="516dp"
-            android:backgroundTint="#00FFFFFF"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/qrScannerImageButton"
-            app:layout_constraintTop_toBottomOf="@+id/contentEditTextText"
-            app:srcCompat="@drawable/qrcode_generator" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
 
 
+                <ImageButton
+                    android:id="@+id/backImageButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:background="#00FFFFFF"
+                    app:layout_constraintBottom_toTopOf="@+id/titleEditTextText"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.06"
+                    app:srcCompat="@drawable/arrow_back" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+                <TextView
+                    android:id="@+id/noteCodeTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="18dp"
+                    android:text="NoteCode"
+                    android:textColor="#DFDFDF"
+                    android:textSize="18dp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/backImageButton"
+                    app:layout_constraintTop_toTopOf="parent" />
 
+                <ImageButton
+                    android:id="@+id/undoImageButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="76dp"
+                    android:layout_marginTop="16dp"
+                    android:background="#00FFFFFF"
+                    android:rotation="180"
+                    app:layout_constraintBottom_toTopOf="@+id/titleEditTextText"
+                    app:layout_constraintStart_toEndOf="@+id/noteCodeTextView"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:srcCompat="@drawable/undo"
+                    tools:ignore="TouchTargetSizeCheck" />
+
+                <ImageButton
+                    android:id="@+id/redoImageButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:background="#00FFFFFF"
+                    android:rotation="180"
+                    app:layout_constraintBottom_toTopOf="@+id/titleEditTextText"
+                    app:layout_constraintStart_toEndOf="@+id/undoImageButton"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:srcCompat="@drawable/redo" />
+
+                <ImageButton
+                    android:id="@+id/checkImageButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="#00FFFFFF"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.784"
+                    app:layout_constraintStart_toEndOf="@id/redoImageButton"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/check" />
+
+                <EditText
+                    android:id="@+id/titleEditTextText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="15dp"
+                    android:ems="10"
+                    android:hint="Title"
+                    android:inputType="textMultiLine"
+                    android:maxLines="5"
+                    android:padding="12dp"
+                    android:scrollHorizontally="false"
+                    android:textColor="#DFDFDF"
+                    android:textColorHint="#D5CACA"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/noteCodeTextView" />
+
+                <EditText
+                    android:id="@+id/contentEditTextText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="15dp"
+                    android:background="@null"
+                    android:ems="10"
+                    android:gravity="top"
+                    android:hint="Note something down"
+                    android:inputType="textMultiLine"
+                    android:padding="12dp"
+                    android:textColor="#DFDFDF"
+                    android:textColorHint="#DBC5C5"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.487"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/titleEditTextText" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </RelativeLayout>
+
+
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
