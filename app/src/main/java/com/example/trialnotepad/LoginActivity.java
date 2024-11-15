@@ -45,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText            = (EditText) findViewById(R.id.passwordEditTextText);
         loginButton                 = (Button) findViewById(R.id.loginButton);
         loginProgressBar            = (ProgressBar) findViewById(R.id.loginProgressBar);
-        createAccountTextView       = (TextView) findViewById(R.id.createAccountTextView);
+        createAccountTextView       = (TextView) findViewById(R.id.logOutTextView);
 
         //Event Management of Buttons
         loginButton.setOnClickListener((v)-> loginUser());

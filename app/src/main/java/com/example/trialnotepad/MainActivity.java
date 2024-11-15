@@ -2,6 +2,7 @@ package com.example.trialnotepad;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,10 +11,13 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
 
     FloatingActionButton addNoteButton;
+    TextView logOutTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,10 +30,20 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        addNoteButton = (FloatingActionButton) findViewById(R.id.addFloatingActionButton);
+        addNoteButton   = (FloatingActionButton) findViewById(R.id.addFloatingActionButton);
+        logOutTextView  = (TextView) findViewById(R.id.logOutTextView);
 
         addNoteButton.setOnClickListener((v)-> startActivity(new Intent(
                       MainActivity.this, NoteDetailsActivity.class)));
 
+        logOutTextView.setOnClickListener((v)-> logout());
+
+
+    }
+    void logout()
+    {
+        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        currentUser = null;
     }
 }
