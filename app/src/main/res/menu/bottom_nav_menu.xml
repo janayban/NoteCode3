@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title=""
+        android:icon="@drawable/bold"/>
+    <item android:title=""
+        android:icon="@drawable/italicize"/>
+    <item android:title=""
+        android:icon="@drawable/underline"/>
+    <item android:title=""
+        android:icon="@drawable/qrcode_scanner"/>
+    <item android:title=""
+        android:icon="@drawable/qrcode_generator"/>
+
+</menu>
