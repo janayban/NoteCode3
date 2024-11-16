@@ -2,14 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:title=""
-        android:icon="@drawable/bold"/>
+        android:icon="@drawable/bold"
+        android:id="@+id/item_bold"/>
     <item android:title=""
-        android:icon="@drawable/italicize"/>
+        android:icon="@drawable/italicize"
+        android:id="@+id/item_italicize"/>
     <item android:title=""
-        android:icon="@drawable/underline"/>
+        android:icon="@drawable/underline"
+        android:id="@+id/item_underline"/>
     <item android:title=""
-        android:icon="@drawable/qrcode_scanner"/>
+        android:icon="@drawable/qrcode_scanner"
+        android:id="@+id/item_qrcode_scanner"/>
     <item android:title=""
-        android:icon="@drawable/qrcode_generator"/>
+        android:icon="@drawable/qrcode_generator"
+        android:id="@+id/item_qrcode_generator"/>
 
 </menu>

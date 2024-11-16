@@ -42,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
     }
     void logout()
     {
+        FirebaseAuth.getInstance().signOut();
         startActivity(new Intent(MainActivity.this, LoginActivity.class));
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        currentUser = null;
+        finish();
     }
 }
