@@ -25,6 +25,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 
+import java.io.FileOutputStream;
+
 public class NoteDetailsActivity extends AppCompatActivity {
 
     ImageButton backImageButton, undoImageButton, redoImageButton, saveImageButton;
@@ -42,11 +44,11 @@ public class NoteDetailsActivity extends AppCompatActivity {
             return insets;
         });
         //Initialize the components
-        backImageButton = findViewById(R.id.backImageButton);
-        saveImageButton = findViewById(R.id.saveImageButton);
-        contentEditText = findViewById(R.id.contentEditTextText);
-        titleEditText = findViewById(R.id.titleEditTextText);
-        bottomNav = findViewById(R.id.bottomNav);
+        backImageButton = (ImageButton) findViewById(R.id.backImageButton);
+        saveImageButton = (ImageButton) findViewById(R.id.saveImageButton);
+        contentEditText = (EditText) findViewById(R.id.contentEditTextText);
+        titleEditText   = (EditText) findViewById(R.id.titleEditTextText);
+        bottomNav       = (BottomNavigationView) findViewById(R.id.bottomNav);
 
 
 
@@ -98,6 +100,8 @@ public class NoteDetailsActivity extends AppCompatActivity {
         note.setTimestamp(Timestamp.now());
 
         saveNoteToFirebase(note);
+
+        saveNoteToLocal(noteTitle, noteContent);
     }
 
     void saveNoteToFirebase(NoteModel note)
@@ -113,7 +117,7 @@ public class NoteDetailsActivity extends AppCompatActivity {
                 {
                     //Note is Added to Firebase Firestore
                     Utility.showToast(NoteDetailsActivity.this,
-                            "Note added successfully");
+                            "Note added successfully to cloud");
                     finish();
                 }
                 else
@@ -124,6 +128,28 @@ public class NoteDetailsActivity extends AppCompatActivity {
 
             }
         });
+
+
+    }
+
+    void saveNoteToLocal(String title, String content) {
+        String filename = title.replaceAll("[ /\\\\\"<>|]", "_") + ".txt"; // Replace spaces with underscores for file naming
+        String fileContent = "Title: " + title + "\n\nContent:\n" + content;
+
+        try {
+            // Writing to internal storage
+            FileOutputStream fos = openFileOutput(filename, MODE_PRIVATE);
+            fos.write(fileContent.getBytes());
+            fos.close();
+
+            Toast.makeText(this, "Note saved locally as " + filename, Toast.LENGTH_SHORT).show();
+            finish();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Failed to save note locally", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
 }
