@@ -11,6 +11,8 @@ googleGmsGoogleServices = "4.4.2"
 firebaseAuth = "23.1.0"
 firebaseFirestore = "25.1.1"
 firebaseUIFirestore = "8.0.2"
+qrVersion = "4.3.0"
+qrVersion2 = "3.4.1"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -23,7 +25,8 @@ constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayo
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 firebase-firestore-ui = { group = "com.firebaseui", name = "firebase-ui-firestore", version.ref = "firebaseUIFirestore" }
-
+qrcode = { group = "com.journeyapps", name = "zxing-android-embedded", version.ref = "qrVersion" }
+qrcode2 = { group = "com.google.zxing", name = "core", version.ref = "qrVersion2" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

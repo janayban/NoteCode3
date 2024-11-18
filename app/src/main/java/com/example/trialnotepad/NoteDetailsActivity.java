@@ -40,7 +40,7 @@ import java.io.FileOutputStream;
 public class NoteDetailsActivity extends AppCompatActivity {
 
     // UI components
-    ImageButton backImageButton, deleteImageButton, saveImageButton;
+    ImageButton backImageButton, deleteImageButton, saveImageButton, qrCodeGenerator;
     EditText titleEditText, contentEditText;
     BottomNavigationView bottomNav;
 
@@ -71,6 +71,7 @@ public class NoteDetailsActivity extends AppCompatActivity {
         contentEditText   = (EditText) findViewById(R.id.contentEditTextText);
         titleEditText     = (EditText) findViewById(R.id.titleEditTextText);
         bottomNav         = (BottomNavigationView) findViewById(R.id.bottomNav);
+        //qrCodeGenerator   = (ImageButton) findViewById(R.id.item_qrcode_generator);
 
         //Retrieve Data to be Edited
         title = getIntent().getStringExtra("title");
@@ -96,12 +97,13 @@ public class NoteDetailsActivity extends AppCompatActivity {
             deleteImageButton.setVisibility(View.VISIBLE);
         }
 
+
         // Set up button click listeners
         backImageButton.setOnClickListener((v)-> back());
         deleteImageButton.setOnClickListener((v)-> deleteNoteFromFirebase());
         saveImageButton.setOnClickListener((v)-> saveNote());
 
-
+        //qrCodeGenerator();
 
         // Initialize Bottom Navigation Buttons for Text Formatting
         bottomNav.getMenu().setGroupCheckable(0, true, false);
@@ -131,6 +133,24 @@ public class NoteDetailsActivity extends AppCompatActivity {
                 isUnderlineActive = !item.isChecked();
                 item.setChecked(isUnderlineActive);
                 toggleUnderlineOnSelection(isUnderlineActive);
+            }
+            else if (itemId == R.id.item_qrcode_generator)
+            {
+            // Handle QR code generator action
+            String titleText = titleEditText.getText().toString();
+            String contentText = contentEditText.getText().toString();
+
+                if (titleText.isEmpty() && contentText.isEmpty())
+                {
+                    Toast.makeText(this, "Note is empty. Cannot generate QR code.", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    Intent intent = new Intent(this, QRCodeGenerationActivity.class);
+                    intent.putExtra("keyTitle", titleText);
+                    intent.putExtra("keyContent", contentText);
+                    startActivity(intent);
+                }
             }
             return false;
         });
