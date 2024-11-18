@@ -3,9 +3,12 @@ package com.example.trialnotepad;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.TextWatcher;
 import android.text.style.StyleSpan;
+import android.text.style.UnderlineSpan;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -33,6 +36,10 @@ public class NoteDetailsActivity extends AppCompatActivity {
     EditText titleEditText, contentEditText;
     BottomNavigationView bottomNav;
 
+    private boolean isBoldActive = false; // Tracks the bold state
+    private boolean isItalicActive = false; // Tracks the italic state
+    private boolean isUnderlineActive = false; // Tracks the underline state
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,31 +58,85 @@ public class NoteDetailsActivity extends AppCompatActivity {
         bottomNav       = (BottomNavigationView) findViewById(R.id.bottomNav);
 
 
-
         backImageButton.setOnClickListener((v)-> back());
         saveImageButton.setOnClickListener((v)-> saveNote());
 
 
 
-
-
-        // Clear any default selection
+        // Initialize Bottom Navigation
         bottomNav.getMenu().setGroupCheckable(0, true, false);
-        for (int i = 0; i < bottomNav.getMenu().size(); i++) {
+        for (int i = 0; i < bottomNav.getMenu().size(); i++)
+        {
             bottomNav.getMenu().getItem(i).setChecked(false);
         }
 
-        // Set an item selection listener
-        bottomNav.setOnItemSelectedListener(item -> {
+        // Set an item selection listener for Bold, Italic, and Underline
+        bottomNav.setOnItemSelectedListener(item ->
+        {
             int itemId = item.getItemId();
-
-            // Toggle the checked state of the selected item
-            boolean isChecked = !item.isChecked();
-            item.setChecked(isChecked);
-
-
-            // Return false to allow multiple selections (so it doesn't handle the selection automatically)
+            if (itemId == R.id.item_bold)
+            {
+                isBoldActive = !item.isChecked();
+                item.setChecked(isBoldActive);
+                toggleStyleOnSelection(Typeface.BOLD, isBoldActive);
+            }
+            else if (itemId == R.id.item_italicize)
+            {
+                isItalicActive = !item.isChecked();
+                item.setChecked(isItalicActive);
+                toggleStyleOnSelection(Typeface.ITALIC, isItalicActive);
+            }
+            else if (itemId == R.id.item_underline)
+            {
+                isUnderlineActive = !item.isChecked();
+                item.setChecked(isUnderlineActive);
+                toggleUnderlineOnSelection(isUnderlineActive);
+            }
             return false;
+        });
+
+
+        // Add a TextWatcher to apply styles dynamically for new text
+        contentEditText.addTextChangedListener(new TextWatcher()
+        {
+            private int startBeforeChange;
+            private int endBeforeChange;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                startBeforeChange = start;
+                endBeforeChange = start + count;
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // No action needed during text changes
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                int start = startBeforeChange;
+                int end = startBeforeChange + (s.length() - endBeforeChange);
+
+                if (start < end)
+                { // Avoid IndexOutOfBoundsException
+                    if (isBoldActive)
+                    {
+                        StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
+                        s.setSpan(boldSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
+                    if (isItalicActive)
+                    {
+                        StyleSpan italicSpan = new StyleSpan(Typeface.ITALIC);
+                        s.setSpan(italicSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
+                    if (isUnderlineActive)
+                    {
+                        UnderlineSpan underlineSpan = new UnderlineSpan();
+                        s.setSpan(underlineSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
+                }
+            }
         });
 
     }
@@ -123,7 +184,8 @@ public class NoteDetailsActivity extends AppCompatActivity {
                 else
                 {
                     Utility.showToast(NoteDetailsActivity.this,
-                            "Failed while adding note");
+                            "Note added to local storage");
+                    finish();
                 }
 
             }
@@ -132,11 +194,13 @@ public class NoteDetailsActivity extends AppCompatActivity {
 
     }
 
-    void saveNoteToLocal(String title, String content) {
-        String filename = title.replaceAll("[ /\\\\\"<>|]", "_") + ".txt"; // Replace spaces with underscores for file naming
+    void saveNoteToLocal(String title, String content)
+    {
+        String filename = title.replaceAll("[ /\\\\\"<>|]", "_") + ".txt"; //
         String fileContent = "Title: " + title + "\n\nContent:\n" + content;
 
-        try {
+        try
+        {
             // Writing to internal storage
             FileOutputStream fos = openFileOutput(filename, MODE_PRIVATE);
             fos.write(fileContent.getBytes());
@@ -145,10 +209,70 @@ public class NoteDetailsActivity extends AppCompatActivity {
             Toast.makeText(this, "Note saved locally as " + filename, Toast.LENGTH_SHORT).show();
             finish();
 
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
             Toast.makeText(this, "Failed to save note locally", Toast.LENGTH_SHORT).show();
             finish();
+        }
+    }
+
+    private void toggleStyleOnSelection(int style, boolean makeStyle)
+    {
+        int start = contentEditText.getSelectionStart();
+        int end = contentEditText.getSelectionEnd();
+
+        if (start < end)
+        { // Check if there is a valid selection
+            Editable text = contentEditText.getText();
+
+            if (makeStyle)
+            {
+                // Apply style
+                StyleSpan styleSpan = new StyleSpan(style);
+                text.setSpan(styleSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            else
+            {
+                // Remove style
+                StyleSpan[] spans = text.getSpans(start, end, StyleSpan.class);
+                for (StyleSpan span : spans)
+                {
+                    if (span.getStyle() == style)
+                    {
+                        text.removeSpan(span);
+                    }
+                }
+            }
+        }
+    }
+
+
+    private void toggleUnderlineOnSelection(boolean makeUnderline)
+    {
+        int start = contentEditText.getSelectionStart();
+        int end = contentEditText.getSelectionEnd();
+
+        if (start < end)
+        { // Check if there is a valid selection
+            Editable text = contentEditText.getText();
+
+            if (makeUnderline)
+            {
+                // Apply underline
+                UnderlineSpan underlineSpan = new UnderlineSpan();
+                text.setSpan(underlineSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            else
+            {
+                // Remove underline
+                UnderlineSpan[] spans = text.getSpans(start, end, UnderlineSpan.class);
+                for (UnderlineSpan span : spans)
+                {
+                    text.removeSpan(span);
+                }
+            }
         }
     }
 
