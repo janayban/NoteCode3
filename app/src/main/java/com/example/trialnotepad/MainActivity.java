@@ -3,7 +3,9 @@ package com.example.trialnotepad;
 import android.app.DownloadManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -47,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
         addNoteButton.setOnClickListener((v)-> startActivity(new Intent(
                       MainActivity.this, NoteDetailsActivity.class)));
         menuImageButton.setOnClickListener((v)-> showMenu());
-        logOutTextView.setOnClickListener((v)-> logout());
 
         setupRecyclerView();
 
@@ -87,13 +88,22 @@ public class MainActivity extends AppCompatActivity {
     //Menu for log out
     void showMenu()
     {
-
+        PopupMenu popupMenu = new PopupMenu(MainActivity.this, menuImageButton);
+        popupMenu.getMenu().add("Logout");
+        popupMenu.show();
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                if(menuItem.getTitle()=="Logout")
+                {
+                    FirebaseAuth.getInstance().signOut();
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                    finish();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
-    void logout()
-    {
-        FirebaseAuth.getInstance().signOut();
-        startActivity(new Intent(MainActivity.this, LoginActivity.class));
-        finish();
-    }
 }

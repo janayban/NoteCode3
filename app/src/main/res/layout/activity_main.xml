@@ -23,19 +23,6 @@
         app:layout_constraintVertical_bias="0.872"
         app:srcCompat="@drawable/add" />
 
-    <TextView
-        android:id="@+id/logOutTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Log Out"
-        android:textColor="#DFDFDF"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.954"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/notesTextView"
@@ -46,8 +33,8 @@
         android:textColor="#DFDFDF"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/logOutTextView"
-        app:layout_constraintHorizontal_bias="0.112"
+        app:layout_constraintEnd_toStartOf="@+id/menuImageButton"
+        app:layout_constraintHorizontal_bias="0.068"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -58,7 +45,7 @@
         android:layout_marginTop="18dp"
         android:background="#00FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.815"
+        app:layout_constraintHorizontal_bias="0.911"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/menu" />

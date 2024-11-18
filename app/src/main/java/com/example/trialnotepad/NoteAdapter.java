@@ -1,6 +1,8 @@
 package com.example.trialnotepad;
 
 import android.content.Context;
+import android.content.Intent;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +28,26 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<NoteModel, NoteAdapter
     protected void onBindViewHolder(@NonNull NoteViewHolder holder, int position, @NonNull NoteModel note) {
         holder.titleTextView.setText(note.title);
         holder.contentTextView.setText(note.content);
+        String previewContent = Html.fromHtml(note.getContent(), Html.FROM_HTML_MODE_LEGACY).toString();
+
+        holder.contentTextView.setText(previewContent.length() > 100
+                ? previewContent.substring(0, 100) + "..."
+                : previewContent);
+
         holder.timestampTextView.setText(Utility.timestampToString(note.timestamp));
+
+        holder.itemView.setOnClickListener((v)-> {
+            Intent intent = new Intent(context, NoteDetailsActivity.class);
+            intent.putExtra("title", note.title);
+            intent.putExtra("content", note.getContent());
+            //intent.putExtra("content", note.content);
+
+            String docId = this.getSnapshots().getSnapshot(position).getId();
+            intent.putExtra("docId", docId);
+
+            context.startActivity(intent);
+
+        });
 
     }
 
