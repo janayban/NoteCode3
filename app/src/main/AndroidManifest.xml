@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
         android:allowBackup="true"
@@ -17,7 +18,12 @@
         tools:targetApi="31">
         <activity
             android:name=".QRCodeGenerationActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".CaptureAct"
+            android:stateNotNeeded="true"
+            android:theme="@style/zxing_CaptureTheme"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".NoteDetailsActivity"
             android:exported="false"

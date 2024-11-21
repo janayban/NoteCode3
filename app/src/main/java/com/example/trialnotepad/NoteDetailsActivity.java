@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -34,6 +35,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.io.FileOutputStream;
 
@@ -133,6 +136,10 @@ public class NoteDetailsActivity extends AppCompatActivity {
                 isUnderlineActive = !item.isChecked();
                 item.setChecked(isUnderlineActive);
                 toggleUnderlineOnSelection(isUnderlineActive);
+            }
+            else if (itemId == R.id.item_qrcode_scanner)
+            {
+                scanCode();
             }
             else if (itemId == R.id.item_qrcode_generator)
             {
@@ -409,5 +416,36 @@ public class NoteDetailsActivity extends AppCompatActivity {
     {
         return Html.toHtml(text, Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE);
     }
+
+    void scanCode()
+    {
+        ScanOptions options = new ScanOptions();
+        options.setPrompt("  Press Volume Up to turn the flash on\nPress Volume Down to turn the flash off");
+        options.setBeepEnabled(true);
+        options.setOrientationLocked(true);
+        options.setCaptureActivity(CaptureAct.class);
+        barLauncher.launch(options);
+    }
+
+    ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
+        if (result.getContents() != null) {
+            // Get the current content of the EditText
+            Editable existingText = contentEditText.getText();
+
+            // Clean up the scanned content
+            String scannedContent = result.getContents().trim(); // Remove leading and trailing whitespace
+
+            // If there is existing text, add a newline before appending scanned content
+            if (existingText.length() > 0) {
+                existingText.append("\n\n");
+            }
+
+            // Append the scanned content
+            existingText.append(scannedContent);
+
+            // Set the updated content back to the EditText (styles will persist)
+            contentEditText.setText(existingText);
+        }
+    });
 
 }
