@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
@@ -13,6 +14,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -45,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+
+
         addNoteButton   = (FloatingActionButton) findViewById(R.id.addFloatingActionButton);
         logOutTextView  = (TextView) findViewById(R.id.logOutTextView);
         searchBar       = (SearchView) findViewById(R.id.searchBarSearchView);
@@ -56,24 +60,58 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this, NoteDetailsActivity.class)));
         menuImageButton.setOnClickListener((v) -> showMenu());
 
+        searchBar.clearFocus();
 
-        //setupRecyclerView();
         setupRecyclerView("");
 
-
-        searchBar.clearFocus();
-        // Add search functionality
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 setupRecyclerView(query.trim());
-                return true;
+                return true; // Indicate that the query submission has been handled
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                setupRecyclerView(newText.trim());
-                return true;
+                // Check if the query is empty or the user pressed "X"
+                if (newText == null || newText.trim().isEmpty()) {
+                    searchBar.clearFocus(); // Clear focus from SearchView
+                    setupRecyclerView(""); // Reset RecyclerView to default state
+                } else {
+                    setupRecyclerView(newText.trim()); // Update RecyclerView based on query
+                }
+                return true; // Return true to indicate the change was handled
+            }
+        });
+
+
+        searchBar.setOnCloseListener(() -> {
+            searchBar.setQuery("", false);
+            searchBar.clearFocus(); // Clear focus from the SearchView
+            setupRecyclerView("");  // Optionally reset RecyclerView to default state
+            return false; // Return false to allow default behavior
+        });
+
+        // Add item click listener for RecyclerView
+        recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                // Check if the event is a click
+                if (e.getAction() == MotionEvent.ACTION_UP) {
+                    // Clear the focus from the SearchView when the RecyclerView is clicked
+                    searchBar.clearFocus();
+                }
+                return false;  // Allow normal processing of the event
+            }
+
+            @Override
+            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                // No action required for touch event
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+                // No action required for disallowing intercept
             }
         });
 
@@ -88,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
 
             query = Utility.getCollectionReferenceForNotes()
                     .orderBy("timestamp", Query.Direction.DESCENDING);
+            searchBar.clearFocus();
         } else {
             // Query notes where title starts with the lowercase search query and order by timestamp
             query = Utility.getCollectionReferenceForNotes()
