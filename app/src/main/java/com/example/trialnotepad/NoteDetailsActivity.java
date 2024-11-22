@@ -74,7 +74,7 @@ public class NoteDetailsActivity extends AppCompatActivity {
         contentEditText   = (EditText) findViewById(R.id.contentEditTextText);
         titleEditText     = (EditText) findViewById(R.id.titleEditTextText);
         bottomNav         = (BottomNavigationView) findViewById(R.id.bottomNav);
-        //qrCodeGenerator   = (ImageButton) findViewById(R.id.item_qrcode_generator);
+
 
         //Retrieve Data to be Edited
         title = getIntent().getStringExtra("title");
@@ -254,8 +254,6 @@ public class NoteDetailsActivity extends AppCompatActivity {
             }
         });
 
-
-
     }
 
     // Save the note to both Firebase and local storage
@@ -287,8 +285,6 @@ public class NoteDetailsActivity extends AppCompatActivity {
     // Save note to Firebase Firestore
     void saveNoteToFirebase(NoteModel note)
     {
-        //Log.d("NoteDetails", "Saving Note to Firestore: "
-          //      + note.getTitle() + " - " + note.getContent());
 
         DocumentReference documentReference;
 
@@ -328,10 +324,8 @@ public class NoteDetailsActivity extends AppCompatActivity {
     // Save note locally as an HTML file
     void saveNoteToLocal(String title, String content)
     {
-        String filename = title.replaceAll("[ /\\\\\"<>|]", "_") + ".html"; //
+        String filename = title.replaceAll("[ /\\\\\"<>|]", "_");
         String fileContent = convertToHtml(contentEditText.getText()); //Convert to HTML format
-        //String fileContent = "Title: " + title + "\n\nContent:\n" + content;
-        Log.d("NoteDetails", "Saving Local File with content: " + fileContent);
 
         try
         {
@@ -417,6 +411,7 @@ public class NoteDetailsActivity extends AppCompatActivity {
         return Html.toHtml(text, Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE);
     }
 
+    // QR Scanner Function
     void scanCode()
     {
         ScanOptions options = new ScanOptions();

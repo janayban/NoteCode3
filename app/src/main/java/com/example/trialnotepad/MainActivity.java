@@ -2,10 +2,14 @@ package com.example.trialnotepad;
 
 import android.app.DownloadManager;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -25,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     FloatingActionButton addNoteButton;
     TextView logOutTextView;
+    SearchView searchBar;
     RecyclerView recyclerView;
     ImageButton menuImageButton;
     NoteAdapter noteAdapter;
@@ -42,29 +47,64 @@ public class MainActivity extends AppCompatActivity {
 
         addNoteButton   = (FloatingActionButton) findViewById(R.id.addFloatingActionButton);
         logOutTextView  = (TextView) findViewById(R.id.logOutTextView);
+        searchBar       = (SearchView) findViewById(R.id.searchBarSearchView);
         recyclerView    = (RecyclerView) findViewById(R.id.recyclerView);
         menuImageButton = (ImageButton) findViewById(R.id.menuImageButton);
 
 
-        addNoteButton.setOnClickListener((v)-> startActivity(new Intent(
-                      MainActivity.this, NoteDetailsActivity.class)));
-        menuImageButton.setOnClickListener((v)-> showMenu());
+        addNoteButton.setOnClickListener((v) -> startActivity(new Intent(
+                MainActivity.this, NoteDetailsActivity.class)));
+        menuImageButton.setOnClickListener((v) -> showMenu());
 
-        setupRecyclerView();
 
+        //setupRecyclerView();
+        setupRecyclerView("");
+
+
+        searchBar.clearFocus();
+        // Add search functionality
+        searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                setupRecyclerView(query.trim());
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                setupRecyclerView(newText.trim());
+                return true;
+            }
+        });
 
     }
 
-    void setupRecyclerView()
-    {
-        Query query = Utility.getCollectionReferenceForNotes().orderBy("timestamp", Query.Direction.DESCENDING);
+    // Recycler View Function
+    void setupRecyclerView(String searchQuery) {
+        String lowercasedQuery = searchQuery.toLowerCase().trim();
+
+        Query query;
+        if (lowercasedQuery.isEmpty()) {
+
+            query = Utility.getCollectionReferenceForNotes()
+                    .orderBy("timestamp", Query.Direction.DESCENDING);
+        } else {
+            // Query notes where title starts with the lowercase search query and order by timestamp
+            query = Utility.getCollectionReferenceForNotes()
+                    .orderBy("lowercaseTitle")
+                    .orderBy("timestamp", Query.Direction.DESCENDING)
+                    .startAt(lowercasedQuery)
+                    .endAt(lowercasedQuery + "\uf8ff");
+        }
 
         FirestoreRecyclerOptions<NoteModel> options = new FirestoreRecyclerOptions.Builder<NoteModel>()
-                .setQuery(query, NoteModel.class).build();
+                .setQuery(query, NoteModel.class)
+                .build();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         noteAdapter = new NoteAdapter(options, this);
         recyclerView.setAdapter(noteAdapter);
+        noteAdapter.startListening();  // Start listening for updates
     }
 
     @Override
@@ -86,16 +126,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Menu for log out
-    void showMenu()
-    {
+    void showMenu() {
         PopupMenu popupMenu = new PopupMenu(MainActivity.this, menuImageButton);
         popupMenu.getMenu().add("Logout");
         popupMenu.show();
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                if(menuItem.getTitle()=="Logout")
-                {
+                if (menuItem.getTitle() == "Logout") {
                     FirebaseAuth.getInstance().signOut();
                     startActivity(new Intent(MainActivity.this, LoginActivity.class));
                     finish();

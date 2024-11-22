@@ -4,6 +4,7 @@ import com.google.firebase.Timestamp;
 
 public class NoteModel {
     String title;
+    String lowercaseTitle;
     String content;
     Timestamp timestamp;
 
@@ -16,6 +17,11 @@ public class NoteModel {
 
     public void setTitle(String title) {
         this.title = title;
+        this.lowercaseTitle = title.toLowerCase();
+    }
+
+    public String getLowercaseTitle() {
+        return lowercaseTitle;
     }
 
     public String getContent() {

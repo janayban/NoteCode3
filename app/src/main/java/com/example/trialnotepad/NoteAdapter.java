@@ -72,4 +72,5 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<NoteModel, NoteAdapter
             timestampTextView   = itemView.findViewById(R.id.noteTimestampTextView);
         }
     }
+
 }
