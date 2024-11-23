@@ -237,17 +237,18 @@ public class NoteDetailsActivity extends AppCompatActivity {
                                 //Note is Deleted to Firebase Firestore
                                 Utility.showToast(NoteDetailsActivity.this,
                                         "Note deleted successfully");
-                                finish();
+                                //finish();
                             }
                             else
                             {
                                 Utility.showToast(NoteDetailsActivity.this,
                                         "Failed while deleting the note");
-                                finish();
+                                //finish();
                             }
 
                         }
                     });
+                    finish();
                     return true;
                 }
                 return false;
@@ -278,7 +279,7 @@ public class NoteDetailsActivity extends AppCompatActivity {
         note.setTimestamp(Timestamp.now());
 
         saveNoteToFirebase(note);
-        saveNoteToLocal(noteTitle, htmlContent);
+        //saveNoteToLocal(noteTitle, htmlContent);
         //saveNoteToLocal(noteTitle, noteContent);
     }
 
@@ -306,22 +307,22 @@ public class NoteDetailsActivity extends AppCompatActivity {
                     //Note is Added to Firebase Firestore
                     Utility.showToast(NoteDetailsActivity.this,
                             "Note added successfully to cloud");
-                    finish();
+                    //finish();
                 }
                 else
                 {
                     Utility.showToast(NoteDetailsActivity.this,
                             "Note added to local storage");
-                    finish();
+                    //finish();
                 }
 
             }
-        });
+        }); finish();
 
 
     }
 
-    // Save note locally as an HTML file
+   /* // Save note locally as an HTML file
     void saveNoteToLocal(String title, String content)
     {
         String filename = title.replaceAll("[ /\\\\\"<>|]", "_");
@@ -344,7 +345,7 @@ public class NoteDetailsActivity extends AppCompatActivity {
             Toast.makeText(this, "Failed to save note locally", Toast.LENGTH_SHORT).show();
             finish();
         }
-    }
+    }*/
 
     // Apply or remove bold/italic styles on selected text
     private void toggleStyleOnSelection(int style, boolean makeStyle)

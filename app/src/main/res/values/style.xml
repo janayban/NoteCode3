@@ -2,8 +2,8 @@
     <resources>
         <!-- Custom style for SearchView -->
         <style name="SearchViewStyle">
-            <item name="android:textColor">#FFFFFF</item>
-            <item name="android:textColorHint">#FFFFFF</item>
+            <item name="android:textColor">#DFDFDF</item>
+            <item name="android:textColorHint">#D5CACA</item>
         </style>
     </resources>
 
