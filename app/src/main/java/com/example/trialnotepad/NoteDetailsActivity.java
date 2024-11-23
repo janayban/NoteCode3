@@ -306,13 +306,13 @@ public class NoteDetailsActivity extends AppCompatActivity {
                 {
                     //Note is Added to Firebase Firestore
                     Utility.showToast(NoteDetailsActivity.this,
-                            "Note added successfully to cloud");
+                            "Note saved to the cloud successfully");
                     //finish();
                 }
                 else
                 {
                     Utility.showToast(NoteDetailsActivity.this,
-                            "Note added to local storage");
+                            "Note saved to the local storage");
                     //finish();
                 }
 
