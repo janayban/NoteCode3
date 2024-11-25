@@ -13,6 +13,8 @@ firebaseFirestore = "25.1.1"
 firebaseUIFirestore = "8.0.2"
 qrVersion = "4.3.0"
 qrVersion2 = "3.4.1"
+pdfVersion = "8.0.5"
+pdfVersion2 = "7.2.6"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -27,6 +29,8 @@ firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore
 firebase-firestore-ui = { group = "com.firebaseui", name = "firebase-ui-firestore", version.ref = "firebaseUIFirestore" }
 qrcode = { group = "com.journeyapps", name = "zxing-android-embedded", version.ref = "qrVersion" }
 qrcode2 = { group = "com.google.zxing", name = "core", version.ref = "qrVersion2" }
+pdf = { group = "com.itextpdf", name = "itext7-core", version.ref = "pdfVersion" }
+pdf2 = { group = "com.itextpdf", name = "itext7-core", version.ref = "pdfVersion2" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

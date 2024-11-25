@@ -43,6 +43,8 @@ dependencies {
     implementation(libs.firebase.firestore.ui)
     implementation(libs.qrcode)
     implementation(libs.qrcode2)
+    implementation(libs.pdf)
+    implementation(libs.pdf2)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

@@ -1,8 +1,17 @@
 package com.example.trialnotepad;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.pdf.PdfDocument;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Spannable;
@@ -39,11 +48,13 @@ import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class NoteDetailsActivity extends AppCompatActivity {
 
     // UI components
-    ImageButton backImageButton, deleteImageButton, saveImageButton, qrCodeGenerator;
+    ImageButton backImageButton, deleteImageButton, saveImageButton, saveAsImageButton;
     EditText titleEditText, contentEditText;
     BottomNavigationView bottomNav;
 
@@ -71,6 +82,7 @@ public class NoteDetailsActivity extends AppCompatActivity {
         backImageButton   = (ImageButton) findViewById(R.id.backImageButton);
         deleteImageButton = (ImageButton) findViewById(R.id.deleteImageButton);
         saveImageButton   = (ImageButton) findViewById(R.id.saveImageButton);
+        saveAsImageButton = (ImageButton) findViewById(R.id.saveAsImageButton);
         contentEditText   = (EditText) findViewById(R.id.contentEditTextText);
         titleEditText     = (EditText) findViewById(R.id.titleEditTextText);
         bottomNav         = (BottomNavigationView) findViewById(R.id.bottomNav);
@@ -105,6 +117,41 @@ public class NoteDetailsActivity extends AppCompatActivity {
         backImageButton.setOnClickListener((v)-> back());
         deleteImageButton.setOnClickListener((v)-> deleteNoteFromFirebase());
         saveImageButton.setOnClickListener((v)-> saveNote());
+
+        saveAsImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create the PopupMenu when the button is clicked
+                PopupMenu popupMenu = new PopupMenu(NoteDetailsActivity.this, saveAsImageButton);
+
+                // Add menu items
+                popupMenu.getMenu().add("Save as PDF");
+                popupMenu.getMenu().add("Save as Docs");
+
+                // Show the popup menu
+                popupMenu.show();
+
+                // Set the listener for menu item clicks
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        // Check which item was clicked
+                        switch (item.getTitle().toString()) {
+                            case "Save as PDF":
+                                // Call the saveAs() method to save as PDF
+                                saveAsPDF();
+                                return true;
+                            case "Save as Docs":
+                                // Call the saveAsDocs() method to save as Docs (you can implement this)
+                                saveAsDocs();
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                });
+            }
+        });
 
         //qrCodeGenerator();
 
@@ -443,5 +490,157 @@ public class NoteDetailsActivity extends AppCompatActivity {
             contentEditText.setText(existingText);
         }
     });
+
+    void saveAsPDF() {
+        // Get the title and content text
+        String titleText = titleEditText.getText().toString().trim();
+        String contentText = contentEditText.getText().toString().trim();
+
+        // Check if both title and content are empty
+        if (titleText.isEmpty() && contentText.isEmpty()) {
+            // Show a toast message indicating the note is empty
+            Toast.makeText(NoteDetailsActivity.this, "The note is empty. Please provide a title or content.", Toast.LENGTH_SHORT).show();
+            return; // Return early and do not proceed with PDF generation
+        }
+
+        // File name
+        String fileName = titleText.isEmpty() ? "Untitled" : titleText; // Default to "Untitled" if no title
+        fileName += ".pdf"; // Always save as a PDF
+
+        // Log the path for debugging
+        Log.d("PDF Path", "Saving PDF as: " + fileName);
+
+        // Get a reference to the ContentResolver
+        ContentResolver contentResolver = getContentResolver();
+
+        // Create the content values for the new PDF file
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
+        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf");
+
+        // Specify the location in the Downloads folder
+        contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/");
+
+        // For Android 10 and above, use MediaStore to get the URI
+        Uri pdfUri = contentResolver.insert(MediaStore.Files.getContentUri("external"), contentValues);
+
+        if (pdfUri != null) {
+            try (OutputStream outputStream = contentResolver.openOutputStream(pdfUri)) {
+                // Create a new PdfDocument to generate the PDF
+                PdfDocument pdfDocument = new PdfDocument();
+
+                // A4 size in points (8.27 x 11.69 inches at 72 points per inch)
+                int pageWidth = 595; // 8.27 inches * 72
+                int pageHeight = 842; // 11.69 inches * 72
+                int margin = 72; // 1 inch margin (72 points)
+
+                // Create a page with A4 dimensions
+                PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create();
+                PdfDocument.Page page = pdfDocument.startPage(pageInfo);
+
+                // Get the Canvas to draw on the PDF page
+                Canvas canvas = page.getCanvas();
+
+                // Set up Paint for text appearance
+                Paint titlePaint = new Paint();
+                titlePaint.setTextSize(14);
+                titlePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD)); // Bold title
+                titlePaint.setColor(Color.BLACK);
+
+                Paint contentPaint = new Paint();
+                contentPaint.setTextSize(12);
+                contentPaint.setColor(Color.BLACK);
+
+                // Add titleText to the PDF (if title is not empty)
+                int startX = margin; // Start at the left margin
+                int startY = margin + 20; // Start at the top margin, slightly offset
+
+                if (!titleText.isEmpty()) {
+                    // Draw the title if available
+                    canvas.drawText("Title: " + titleText, startX, startY, titlePaint);
+                    startY += 25; // Add space below the title
+                }
+
+                // After the title, adjust startY for content (if content exists)
+                startY += 10; // Add a slight space after title before content
+
+                // Process the content text
+                int maxTextWidth = pageWidth - 2 * margin; // Maximum width for text within margins
+                Paint.FontMetrics fontMetrics = contentPaint.getFontMetrics(); // Get font metrics for accurate line spacing
+                float lineHeight = fontMetrics.bottom - fontMetrics.top + 5; // Line height
+
+                // Split content into paragraphs (even if it's empty)
+                String[] paragraphs = contentText.split("\n");
+
+                for (String paragraph : paragraphs) { // Process each paragraph
+                    String[] words = paragraph.split(" "); // Split the paragraph into words
+                    StringBuilder line = new StringBuilder();
+
+                    for (String word : words) {
+                        String testLine = line.length() > 0 ? line + " " + word : word;
+                        float textWidth = contentPaint.measureText(testLine);
+
+                        if (textWidth > maxTextWidth) {
+                            // Draw the current line and reset for the next line
+                            canvas.drawText(line.toString(), startX, startY, contentPaint);
+                            startY += lineHeight; // Move to next line
+
+                            line = new StringBuilder(word); // Start a new line
+
+                            // Check if we need a new page
+                            if (startY + lineHeight > pageHeight - margin) {
+                                pdfDocument.finishPage(page);
+                                pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, pdfDocument.getPages().size() + 1).create();
+                                page = pdfDocument.startPage(pageInfo);
+                                canvas = page.getCanvas();
+                                startY = margin; // Reset Y position for the new page
+                            }
+                        } else {
+                            line.append(" ").append(word);
+
+                        }
+                    }
+
+                    // Draw the last line of the paragraph
+                    if (line.length() > 0) {
+                        canvas.drawText(line.toString(), startX, startY, contentPaint);
+                        startY += lineHeight; // Move to next line
+                    }
+
+
+                    // Check if we need a new page for the next paragraph
+                    if (startY + lineHeight > pageHeight - margin) {
+                        pdfDocument.finishPage(page);
+                        pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, pdfDocument.getPages().size() + 1).create();
+                        page = pdfDocument.startPage(pageInfo);
+                        canvas = page.getCanvas();
+                        startY = margin; // Reset Y position for the new page
+                    }
+                }
+
+                // Finish and close the last page
+                pdfDocument.finishPage(page);
+
+                // Save the document to the specified file using the output stream
+                pdfDocument.writeTo(outputStream);
+                pdfDocument.close();
+
+                Toast.makeText(NoteDetailsActivity.this, "PDF saved to Downloads folder!", Toast.LENGTH_LONG).show();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(NoteDetailsActivity.this, "Error creating PDF: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(NoteDetailsActivity.this, "Failed to create file URI!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    private void saveAsDocs() {
+        // Your implementation to save as DOCX or any other format
+        // This could involve using a library like Apache POI or Google Docs API
+        // For now, you can add a placeholder or another method for saving in .docx format.
+        Toast.makeText(NoteDetailsActivity.this, "Save as Docs functionality not yet implemented.", Toast.LENGTH_SHORT).show();
+    }
 
 }
