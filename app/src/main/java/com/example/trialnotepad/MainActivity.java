@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.widget.EditText;
@@ -168,7 +169,8 @@ public class MainActivity extends AppCompatActivity {
 
     //Menu for log out
     void showMenu() {
-        PopupMenu popupMenu = new PopupMenu(MainActivity.this, menuImageButton);
+        PopupMenu popupMenu = new PopupMenu(MainActivity.this, menuImageButton, Gravity.CENTER,
+                                            0, R.style.PopupMenuStyle);
         popupMenu.getMenu().add("Logout");
         popupMenu.show();
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {

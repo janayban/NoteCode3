@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:tint="#050505"
-        app:backgroundTint="#BDB8B8"
+        app:backgroundTint="#5f5f5f"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.881"

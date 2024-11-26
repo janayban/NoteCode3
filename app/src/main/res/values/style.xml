@@ -5,5 +5,11 @@
             <item name="android:textColor">#DFDFDF</item>
             <item name="android:textColorHint">#D5CACA</item>
         </style>
-    </resources>
+
+        <style name="PopupMenuStyle" parent="Widget.AppCompat.PopupMenu">
+            <item name="android:popupBackground">@drawable/popup_menu_background</item>
+        </style>
+
+
+</resources>
 

@@ -21,6 +21,7 @@ import android.text.TextWatcher;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -122,7 +123,8 @@ public class NoteDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Create the PopupMenu when the button is clicked
-                PopupMenu popupMenu = new PopupMenu(NoteDetailsActivity.this, saveAsImageButton);
+                PopupMenu popupMenu = new PopupMenu(NoteDetailsActivity.this, saveAsImageButton, Gravity.CENTER,
+                                                    0, R.style.PopupMenuStyle);
 
                 // Add menu items
                 popupMenu.getMenu().add("Save as PDF");
@@ -263,7 +265,8 @@ public class NoteDetailsActivity extends AppCompatActivity {
 
     void deleteNoteFromFirebase()
     {
-        PopupMenu popupMenu = new PopupMenu(NoteDetailsActivity.this, deleteImageButton);
+        PopupMenu popupMenu = new PopupMenu(NoteDetailsActivity.this, deleteImageButton, Gravity.CENTER,
+                                            0, R.style.PopupMenuStyle);
         popupMenu.getMenu().add("Delete");
         popupMenu.show();
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
