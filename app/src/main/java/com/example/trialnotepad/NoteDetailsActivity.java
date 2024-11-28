@@ -48,6 +48,11 @@ import com.google.firebase.firestore.DocumentReference;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
+import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -128,7 +133,7 @@ public class NoteDetailsActivity extends AppCompatActivity {
 
                 // Add menu items
                 popupMenu.getMenu().add("Save as PDF");
-                popupMenu.getMenu().add("Save as Docs");
+                popupMenu.getMenu().add("Save as Docx");
 
                 // Show the popup menu
                 popupMenu.show();
@@ -143,9 +148,9 @@ public class NoteDetailsActivity extends AppCompatActivity {
                                 // Call the saveAs() method to save as PDF
                                 saveAsPDF();
                                 return true;
-                            case "Save as Docs":
+                            case "Save as Docx":
                                 // Call the saveAsDocs() method to save as Docs (you can implement this)
-                                saveAsDocs();
+                                saveAsDocx();
                                 return true;
                             default:
                                 return false;
@@ -260,7 +265,8 @@ public class NoteDetailsActivity extends AppCompatActivity {
     // Navigate back to the main activity
     void back()
     {
-        startActivity(new Intent(NoteDetailsActivity.this,MainActivity.class));
+        finish();
+        //startActivity(new Intent(NoteDetailsActivity.this,MainActivity.class));
     }
 
     void deleteNoteFromFirebase()
@@ -357,45 +363,18 @@ public class NoteDetailsActivity extends AppCompatActivity {
                     //Note is Added to Firebase Firestore
                     Utility.showToast(NoteDetailsActivity.this,
                             "Note saved to the cloud successfully");
-                    //finish();
                 }
                 else
                 {
                     Utility.showToast(NoteDetailsActivity.this,
                             "Note saved to the local storage");
-                    //finish();
                 }
 
             }
         }); finish();
 
-
     }
 
-   /* // Save note locally as an HTML file
-    void saveNoteToLocal(String title, String content)
-    {
-        String filename = title.replaceAll("[ /\\\\\"<>|]", "_");
-        String fileContent = convertToHtml(contentEditText.getText()); //Convert to HTML format
-
-        try
-        {
-            // Writing to internal storage
-            FileOutputStream fos = openFileOutput(filename, MODE_PRIVATE);
-            fos.write(fileContent.getBytes());
-            fos.close();
-
-            Toast.makeText(this, "Note saved locally as " + filename, Toast.LENGTH_SHORT).show();
-            finish();
-
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            Toast.makeText(this, "Failed to save note locally", Toast.LENGTH_SHORT).show();
-            finish();
-        }
-    }*/
 
     // Apply or remove bold/italic styles on selected text
     private void toggleStyleOnSelection(int style, boolean makeStyle)
@@ -639,11 +618,73 @@ public class NoteDetailsActivity extends AppCompatActivity {
     }
 
 
-    private void saveAsDocs() {
-        // Your implementation to save as DOCX or any other format
-        // This could involve using a library like Apache POI or Google Docs API
-        // For now, you can add a placeholder or another method for saving in .docx format.
-        Toast.makeText(NoteDetailsActivity.this, "Save as Docs functionality not yet implemented.", Toast.LENGTH_SHORT).show();
+    void saveAsDocx() {
+        // Get the title and content text
+        String titleText = titleEditText.getText().toString().trim();
+        String contentText = contentEditText.getText().toString().trim();
+
+        // Check if both title and content are empty
+        if (titleText.isEmpty() && contentText.isEmpty()) {
+            Toast.makeText(NoteDetailsActivity.this, "The note is empty. Please provide a title or content.", Toast.LENGTH_SHORT).show();
+            return; // Return early
+        }
+
+        // File name
+        String fileName = titleText.isEmpty() ? "Untitled" : titleText;
+        fileName += ".docx";
+
+        // Log the file name for debugging
+        Log.d("DOCX Path", "Saving DOCX as: " + fileName);
+
+        // Get a reference to the ContentResolver
+        ContentResolver contentResolver = getContentResolver();
+
+        // Create the content values for the new DOCX file
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
+        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/");
+
+        // Create the URI for the DOCX file
+        Uri docxUri = contentResolver.insert(MediaStore.Files.getContentUri("external"), contentValues);
+
+        if (docxUri != null) {
+            try (OutputStream outputStream = contentResolver.openOutputStream(docxUri)) {
+                // Create a new Word document
+                XWPFDocument document = new XWPFDocument();
+
+                // Create a title paragraph if the title is not empty
+                if (!titleText.isEmpty()) {
+                    XWPFParagraph titleParagraph = document.createParagraph();
+                    titleParagraph.setAlignment(ParagraphAlignment.CENTER); // Center-align the title
+                    XWPFRun titleRun = titleParagraph.createRun();
+                    titleRun.setBold(true);
+                    titleRun.setFontSize(16);
+                    titleRun.setText(titleText);
+                }
+
+                // Add a blank paragraph to separate title and content
+                document.createParagraph();
+
+                // Add the content paragraph
+                XWPFParagraph contentParagraph = document.createParagraph();
+                contentParagraph.setAlignment(ParagraphAlignment.LEFT); // Left-align the content
+                XWPFRun contentRun = contentParagraph.createRun();
+                contentRun.setFontSize(12);
+                contentRun.setText(contentText);
+
+                // Save the document to the output stream
+                document.write(outputStream);
+                document.close();
+
+                Toast.makeText(NoteDetailsActivity.this, "DOCX saved to Downloads folder!", Toast.LENGTH_LONG).show();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(NoteDetailsActivity.this, "Error creating DOCX: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(NoteDetailsActivity.this, "Failed to create file URI!", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

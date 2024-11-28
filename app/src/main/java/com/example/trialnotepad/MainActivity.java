@@ -133,10 +133,9 @@ public class MainActivity extends AppCompatActivity {
         } else {
             // Query notes where title starts with the lowercase search query and order by timestamp
             query = Utility.getCollectionReferenceForNotes()
-                    .orderBy("lowercaseTitle")
-                    .orderBy("timestamp", Query.Direction.DESCENDING)
-                    .startAt(lowercasedQuery)
-                    .endAt(lowercasedQuery + "\uf8ff");
+                    .whereGreaterThanOrEqualTo("lowercaseTitle", lowercasedQuery)
+                    .whereLessThanOrEqualTo("lowercaseTitle", lowercasedQuery + "\uf8ff")
+                    .orderBy("timestamp", Query.Direction.DESCENDING);
         }
 
         FirestoreRecyclerOptions<NoteModel> options = new FirestoreRecyclerOptions.Builder<NoteModel>()

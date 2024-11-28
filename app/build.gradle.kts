@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.trialnotepad"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -45,6 +45,8 @@ dependencies {
     implementation(libs.qrcode2)
     implementation(libs.pdf)
     implementation(libs.pdf2)
+    implementation(libs.docs1)
+    implementation(libs.docs2)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

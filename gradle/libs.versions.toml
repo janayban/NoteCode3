@@ -15,6 +15,8 @@ qrVersion = "4.3.0"
 qrVersion2 = "3.4.1"
 pdfVersion = "8.0.5"
 pdfVersion2 = "7.2.6"
+docsVersion1 = "5.2.3"
+docsVersion2 = "5.2.3"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -31,6 +33,9 @@ qrcode = { group = "com.journeyapps", name = "zxing-android-embedded", version.r
 qrcode2 = { group = "com.google.zxing", name = "core", version.ref = "qrVersion2" }
 pdf = { group = "com.itextpdf", name = "itext7-core", version.ref = "pdfVersion" }
 pdf2 = { group = "com.itextpdf", name = "itext7-core", version.ref = "pdfVersion2" }
+docs1 = { group = "org.apache.poi", name = "poi", version.ref = "docsVersion1" }
+docs2 = { group = "org.apache.poi", name = "poi-ooxml", version.ref = "docsVersion2" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
