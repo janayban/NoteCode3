@@ -7,6 +7,7 @@ public class NoteModel {
     String lowercaseTitle;
     String content;
     Timestamp timestamp;
+    String font;
 
     public NoteModel() {
     }
@@ -39,4 +40,13 @@ public class NoteModel {
     public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
     }
+
+    public String getFont() {
+        return font;
+    }
+
+    public void setFont(String font) {
+        this.font = font;
+    }
+
 }

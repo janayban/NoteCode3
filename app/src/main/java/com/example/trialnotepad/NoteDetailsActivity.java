@@ -63,6 +63,7 @@ public class NoteDetailsActivity extends AppCompatActivity {
     ImageButton backImageButton, deleteImageButton, saveImageButton, saveAsImageButton;
     EditText titleEditText, contentEditText;
     BottomNavigationView bottomNav;
+    TextView noteCodeTextView;
 
     // Note data variables for Editing the note
     String title, content, docId;
@@ -89,6 +90,7 @@ public class NoteDetailsActivity extends AppCompatActivity {
         deleteImageButton = (ImageButton) findViewById(R.id.deleteImageButton);
         saveImageButton   = (ImageButton) findViewById(R.id.saveImageButton);
         saveAsImageButton = (ImageButton) findViewById(R.id.saveAsImageButton);
+        noteCodeTextView  = (TextView) findViewById(R.id.noteCodeTextView);
         contentEditText   = (EditText) findViewById(R.id.contentEditTextText);
         titleEditText     = (EditText) findViewById(R.id.titleEditTextText);
         bottomNav         = (BottomNavigationView) findViewById(R.id.bottomNav);
@@ -98,6 +100,7 @@ public class NoteDetailsActivity extends AppCompatActivity {
         title = getIntent().getStringExtra("title");
         content = getIntent().getStringExtra("content");
         docId = getIntent().getStringExtra("docId");
+        String font = getIntent().getStringExtra("font");
 
         if(docId!=null && !docId.isEmpty())
         {
@@ -113,6 +116,26 @@ public class NoteDetailsActivity extends AppCompatActivity {
             contentEditText.setText(spannableContent);
         }
 
+        // Apply the font style
+        if (font != null) {
+            if ("Georgia".equals(font)) {
+                contentEditText.setTypeface(Typeface.create("georgia", Typeface.NORMAL));
+                titleEditText.setTypeface(Typeface.create("georgia", Typeface.BOLD));
+            } else if ("Monospace".equals(font)) {
+                contentEditText.setTypeface(Typeface.MONOSPACE);
+                titleEditText.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+            } else {
+                contentEditText.setTypeface(Typeface.SANS_SERIF);
+                titleEditText.setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
+            }
+
+            selectedFont = font; // Update the selectedFont variable to reflect the current font
+        } else {
+            // Default font if not specified
+            contentEditText.setTypeface(Typeface.SANS_SERIF);
+            titleEditText.setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
+        }
+
         if(isEditMode)
         {
             deleteImageButton.setVisibility(View.VISIBLE);
@@ -123,6 +146,7 @@ public class NoteDetailsActivity extends AppCompatActivity {
         backImageButton.setOnClickListener((v)-> back());
         deleteImageButton.setOnClickListener((v)-> deleteNoteFromFirebase());
         saveImageButton.setOnClickListener((v)-> saveNote());
+        noteCodeTextView.setOnClickListener((v)->changeFont());
 
         saveAsImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -313,11 +337,11 @@ public class NoteDetailsActivity extends AppCompatActivity {
 
     }
 
+
     // Save the note to both Firebase and local storage
     void saveNote()
     {
         String noteTitle = titleEditText.getText().toString();
-        String noteContent = contentEditText.getText().toString();
         // Save as HTML
         String htmlContent = convertToHtml(contentEditText.getText());
 
@@ -331,12 +355,10 @@ public class NoteDetailsActivity extends AppCompatActivity {
         NoteModel note = new NoteModel();
         note.setTitle(noteTitle);
         note.setContent(htmlContent);
-        //note.setContent(noteContent);
         note.setTimestamp(Timestamp.now());
+        note.setFont(selectedFont); // Save the selected font
 
         saveNoteToFirebase(note);
-        //saveNoteToLocal(noteTitle, htmlContent);
-        //saveNoteToLocal(noteTitle, noteContent);
     }
 
     // Save note to Firebase Firestore
@@ -686,5 +708,49 @@ public class NoteDetailsActivity extends AppCompatActivity {
             Toast.makeText(NoteDetailsActivity.this, "Failed to create file URI!", Toast.LENGTH_SHORT).show();
         }
     }
+
+    // Function for Font Change when NoteCode is pressed
+    String selectedFont; // Add this field to store the selected font
+
+    void changeFont() {
+        // Create the PopupMenu
+        PopupMenu popupMenu = new PopupMenu(NoteDetailsActivity.this, noteCodeTextView, Gravity.CENTER, 0, R.style.PopupMenuStyle);
+
+        // Add font options to the menu
+        popupMenu.getMenu().add("Default");
+        popupMenu.getMenu().add("Georgia");
+        popupMenu.getMenu().add("Monospace");
+
+        // Show the menu
+        popupMenu.show();
+
+        // Handle menu item clicks
+        popupMenu.setOnMenuItemClickListener(menuItem -> {
+            Typeface selectedTypeface;
+
+            // Check which option was selected
+            if (menuItem.getTitle().equals("Default")) {
+                selectedTypeface = Typeface.SANS_SERIF; // Default system sans-serif font
+                selectedFont = "Default";
+            } else if (menuItem.getTitle().equals("Georgia")) {
+                selectedTypeface = Typeface.create("georgia", Typeface.NORMAL); // Georgia font (built-in)
+                selectedFont = "Georgia";
+            } else if (menuItem.getTitle().equals("Monospace")) {
+                selectedTypeface = Typeface.MONOSPACE; // Monospace font (built-in)
+                selectedFont = "Monospace";
+            } else {
+                return false;
+            }
+
+            // Apply the selected font to contentEditText
+            contentEditText.setTypeface(selectedTypeface);
+
+            // Apply the selected font to titleEditText and retain bold style
+            titleEditText.setTypeface(selectedTypeface, Typeface.BOLD);
+
+            return true;
+        });
+    }
+
 
 }
